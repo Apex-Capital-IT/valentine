@@ -52,7 +52,7 @@ export default function Valentine() {
         onClick={sendKiss}
         className="px-6 py-3 bg-red-500 text-white rounded-full font-semibold shadow-lg hover:bg-red-600 transition duration-300"
       >
-        Send a Virtual Kiss
+Үнсэлт илгээх
       </motion.button>
 
       <AnimatePresence>
