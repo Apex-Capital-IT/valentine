@@ -1,13 +1,27 @@
 "use client"
 
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useCallback } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function Valentine() {
-  const [isSent, setIsSent] = useState(false)
+  const [kisses, setKisses] = useState<{ id: number; x: number; y: number }[]>([])
+
+  const sendKiss = useCallback(() => {
+    const newKiss = {
+      id: Date.now(),
+      x: Math.random() * (window.innerWidth - 50),
+      y: Math.random() * (window.innerHeight - 50),
+    }
+    setKisses((prevKisses) => [...prevKisses, newKiss])
+
+    // Remove the kiss after 2 seconds
+    setTimeout(() => {
+      setKisses((prevKisses) => prevKisses.filter((kiss) => kiss.id !== newKiss.id))
+    }, 2000)
+  }, [])
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-pink-100">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-pink-100 overflow-hidden">
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: [0, 1.2, 1] }}
@@ -35,11 +49,27 @@ export default function Valentine() {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setIsSent(true)}
+        onClick={sendKiss}
         className="px-6 py-3 bg-red-500 text-white rounded-full font-semibold shadow-lg hover:bg-red-600 transition duration-300"
       >
-        {isSent ? "Kiss Sent! ❤️" : "Send a Virtual Kiss"}
+        Send a Virtual Kiss
       </motion.button>
+
+      <AnimatePresence>
+        {kisses.map((kiss) => (
+          <motion.div
+            key={kiss.id}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl absolute"
+            style={{ left: kiss.x, top: kiss.y }}
+          >
+            💋
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   )
 }
